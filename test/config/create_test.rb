@@ -13,6 +13,7 @@ class Config::CreateTest < Test::Unit::TestCase
   def test_default_options
     assert !@config.create.persistent
     assert !@config.create.edit_after_create
+    assert !@config.create.show_after_create
     assert_equal 'Create Modelstub', @config.create.label
   end
 
@@ -51,5 +52,10 @@ class Config::CreateTest < Test::Unit::TestCase
   def test_edit_after_create
     @config.create.edit_after_create = true
     assert @config.create.edit_after_create
+  end
+
+  def test_show_after_create
+    @config.create.show_after_create = true
+    assert @config.create.show_after_create
   end
 end

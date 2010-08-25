@@ -5,6 +5,7 @@ module ActiveScaffold::Config
       super
       self.persistent = self.class.persistent
       self.edit_after_create = self.class.edit_after_create
+      self.show_after_create = self.class.show_after_create
     end
 
     # global level configuration
@@ -26,6 +27,10 @@ module ActiveScaffold::Config
     cattr_accessor :edit_after_create
     @@edit_after_create = false
 
+    # whether show is opened after a create or not
+    cattr_accessor :show_after_create
+    @@show_after_create = false
+
     # instance-level configuration
     # ----------------------------
     # the label= method already exists in the Form base class
@@ -39,5 +44,8 @@ module ActiveScaffold::Config
 
     # whether the form stays open after a create or not
     attr_accessor :edit_after_create
+
+    # whether show is opened after a create or not
+    attr_accessor :show_after_create
   end
 end
