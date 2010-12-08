@@ -58,7 +58,7 @@ module ActiveScaffold
           value = column_value_from_param_value(parent_record, column, attributes[column.name]) 
 
           # we avoid assigning a value that already exists because otherwise has_one associations will break (AR bug in has_one_association.rb#replace)
-          parent_record.send("#{column.name}=", value) unless column.through_association? or parent_record.send(column.name) == value
+          parent_record.send("#{column.name}=", value) unless parent_record.send(column.name) == value
           
         # plural associations may not actually appear in the params if all of the options have been unselected or cleared away.
         # NOTE: the "form_ui" check isn't really necessary, except that without it we have problems
@@ -66,7 +66,7 @@ module ActiveScaffold
         # params even though they're in the columns list. the result is that associations were being
         # emptied out way too often. BUT ... this means there's still a lingering bug in the default association
         # form code: you can't delete the last association in the list.
-        elsif column.form_ui and column.plural_association? and not column.through_association?
+        elsif column.form_ui and column.plural_association?
           parent_record.send("#{column.name}=", [])
         end
       end

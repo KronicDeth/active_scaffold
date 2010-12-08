@@ -30,6 +30,34 @@ module ActiveScaffold
       end
     end
 
+    def condition_and_includes_for_nested_constraint(association, key, value)
+      next_key = value.keys.first
+      next_value = value.values.first
+      next_association = association.klass.reflect_on_association(next_key)
+      
+      if next_value.is_a? Hash
+        condition, nested_includes = condition_and_includes_for_nested_constraint(
+          next_association,
+          next_key,
+          next_value
+        )
+        
+        includes = {
+          key => nested_includes
+        }
+        
+        [condition, includes]
+      else
+        field = next_association.klass.primary_key
+        table = next_association.table_name
+        
+        condition = constraint_condition_for("#{table}.#{field}", next_value)
+        includes = { key => next_key }
+        
+        [condition, includes]
+      end
+    end
+    
     # Returns search conditions based on the current scaffold constraints.
     #
     # Supports constraints based on either a column name (in which case it checks for an association
@@ -47,13 +75,14 @@ module ActiveScaffold
           #   data model: Park -> Den -> Bear
           #   constraint: :den => {:park => 5}
           if v.is_a? Hash
-            far_association = column.association.klass.reflect_on_association(v.keys.first)
-            field = far_association.klass.primary_key
-            table = far_association.table_name
+            condition, includes = condition_and_includes_for_nested_constraint(
+              column.association,
+              k,
+              v
+            )
 
-            active_scaffold_includes.concat([{k => v.keys.first}]) # e.g. {:den => :park}
-            constraint_condition_for("#{table}.#{field}", v.values.first)
-
+            active_scaffold_includes.concat([includes]) # e.g. {:den => :park}
+            condition
           # association column constraint
           elsif column.association
             if column.association.macro == :has_and_belongs_to_many

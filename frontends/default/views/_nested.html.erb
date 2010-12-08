@@ -13,12 +13,26 @@
       column = active_scaffold_config.columns[column_name]
       association = column.association
 
+      nested_through_constraint = lambda { |nested_association, parent_id|
+        # if nested
+        if nested_association.through_reflection
+          { nested_association.reverse => nested_through_constraint.call(
+              nested_association.through_reflection,
+              parent_id
+            )
+          }
+        else
+          { nested_association.reverse => parent_id }
+        end
+      }
+      
       # determine what constraints we need
       if column.through_association?
         @constraints = {
-          association.source_reflection.reverse => {
-            association.through_reflection.reverse => parent_id
-          }
+          association.source_reflection.reverse => nested_through_constraint.call(
+            association.through_reflection,
+            parent_id
+          )
         }
       else
         @constraints = { association.reverse => parent_id }
