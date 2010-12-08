@@ -15,7 +15,8 @@ module ActiveScaffold::Actions
       if params[:in_place_editing]
         render :inline => "<%= active_scaffold_input_for(active_scaffold_config.columns[params[:update_column].to_sym]) %>"
       elsif !column.nil?
-        value = column_value_from_param_value(@record, column, params[:value])
+        param_value = params[:record] && params[:record][column.name]
+        value = column_value_from_param_value(@record, column, param_value)
         @record.send "#{column.name}=", value
         @update_columns = Array(params[:update_column])
         after_render_field(@record, column)

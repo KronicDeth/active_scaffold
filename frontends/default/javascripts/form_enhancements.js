@@ -73,6 +73,12 @@ TextFieldWithExample.prototype = {
 	}
 }
 
+Form.columnValue = function(form, column_name) {
+    var column_inputs = Element.select(form, '[name ^= "' + column_name + '"]');
+    
+    return Form.serializeElements(column_inputs);
+  }
+
 Form.disable = function(form) {
     var elements = this.getElements(form);
     for (var i = 0; i < elements.length; i++) {

@@ -80,7 +80,7 @@ module ActiveScaffold
           }
           url_params[:controller] = controller.class.active_scaffold_controller_for(@record.class).controller_path if scope
           ajax_options = {:method => :get, 
-                          :url => url_for(url_params), :with => "'value=' + this.value",
+                          :url => url_for(url_params), :with => "Form.columnValue(this.form, '#{options[:name]}')",
                           :after => "$('#{loading_indicator_id(:action => form_action, :id => params[:id])}').style.visibility = 'visible'; Form.disable('#{element_form_id(:action => form_action)}');",
                           :complete => "$('#{loading_indicator_id(:action => form_action, :id => params[:id])}').style.visibility = 'hidden'; Form.enable('#{element_form_id(:action => form_action)}');"}
           options[:onchange] = "#{remote_function(ajax_options)};#{options[:onchange]}"
@@ -125,7 +125,7 @@ module ActiveScaffold
           this_name = "#{options[:name]}[#{i}][id]"
           this_id = "#{options[:id]}_#{i}_id"
           html << "<li>"
-          html << check_box_tag(this_name, id, associated_ids.include?(id), :id => this_id)
+          html << check_box_tag(this_name, id, associated_ids.include?(id), :id => this_id, :onchange => options[:onchange])
           html << "<label for='#{this_id}'>"
           html << label
           html << "</label>"
