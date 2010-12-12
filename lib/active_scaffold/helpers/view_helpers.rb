@@ -125,7 +125,20 @@ module ActiveScaffold
       end
 
       def skip_action_link(link)
-        (link.security_method_set? or controller.respond_to? link.security_method) and !controller.send(link.security_method)
+        skip = false
+        
+        if link.security_method_set? and controller.respond_to? link.security_method
+          security_method = controller.method(link.security_method)
+          
+          args = []
+          if security_method.arity == 1
+            args << link
+          end
+          
+          skip = !security_method.call(*args)
+        end
+        
+        skip
       end
 
       def render_action_link(link, url_options, record = nil)
