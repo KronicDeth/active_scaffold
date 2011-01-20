@@ -117,6 +117,7 @@ module ActiveScaffold::Actions
             @record.save! and @record.save_associated!
             after_create_save(@record)
           end
+        self.successful = false
         end
       rescue ActiveRecord::RecordInvalid
       end
