@@ -21,6 +21,9 @@
               parent_id
             )
           }
+        # polymorphic
+        elsif nested_association.options[:as]
+          { nested_association.reverse => [parent_id, @record.class.name] }
         else
           { nested_association.reverse => parent_id }
         end

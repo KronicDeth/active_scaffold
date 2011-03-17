@@ -47,6 +47,22 @@ module ActiveScaffold
         }
         
         [condition, includes]
+      # polymorphic
+      elsif next_value.is_a? Array
+        table = next_association.active_record.table_name
+        
+        fields = [next_association.primary_key_name,
+                  next_association.options[:foreign_type]]
+        
+        field_conditions = []
+        fields.each_with_index do |field, i|
+          field_condition = constraint_condition_for("#{table}.#{field}", next_value[i])
+          field_conditions << field_condition
+        end
+        
+        condition = merge_conditions(*field_conditions)
+        
+        [condition, key]
       else
         field = next_association.klass.primary_key
         table = next_association.table_name
