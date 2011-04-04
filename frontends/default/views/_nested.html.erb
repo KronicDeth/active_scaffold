@@ -29,8 +29,13 @@
         end
       }
       
+      column_constraints = "constraint_for_#{column_name}"
+      if controller.respond_to? column_constraints 
+        @constraints = {
+          association.reverse => controller.send(column_constraints, parent_id)
+        }
       # determine what constraints we need
-      if column.through_association?
+      elsif column.through_association?
         @constraints = {
           association.source_reflection.reverse => nested_through_constraint.call(
             association.through_reflection,
